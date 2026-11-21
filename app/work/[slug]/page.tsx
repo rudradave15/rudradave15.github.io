@@ -37,7 +37,6 @@ const ARTIFACT_LABEL: Record<string, string> = {
   repo: "Repo",
   screenshot: "Screenshot",
   recording: "Recording",
-  "live-demo": "Live demo",
   doc: "Doc",
 };
 
@@ -69,7 +68,7 @@ export default async function ProjectPage({
         href="/#work"
         className="link-draw font-mono-label text-[11px] text-ink-muted"
       >
-        ← Systems index
+        ← Projects
       </Link>
 
       <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 font-mono-label text-[11px] text-ink-muted">

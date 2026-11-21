@@ -1,12 +1,21 @@
 {
   "name": "Rudra Dave",
-  "headline": "TODO, needs your sign-off. Draft: \"Builder of agentic systems and deterministic tools. Production automation, not tutorials.\"",
+  "headline": "AI & Automation Developer: Generative AI, AI agents, Python, TypeScript",
   "location": "Ahmedabad, India",
   "email": "rudradave701@gmail.com",
   "links": [
-    { "label": "LinkedIn", "href": "https://www.linkedin.com/in/rudra-dave-56158b317" },
-    { "label": "GitHub", "href": "TODO, need your GitHub username/URL" },
-    { "label": "Email", "href": "mailto:rudradave701@gmail.com" }
+    {
+      "label": "LinkedIn",
+      "href": "https://www.linkedin.com/in/rudra-dave-56158b317"
+    },
+    {
+      "label": "GitHub",
+      "href": "https://github.com/rudradave15"
+    },
+    {
+      "label": "Email",
+      "href": "mailto:rudradave701@gmail.com"
+    }
   ],
   "education": [
     {
@@ -47,9 +56,50 @@
     }
   ],
   "skills": [
-    { "group": "Languages", "items": ["Python", "C", "SQL"] },
-    { "group": "AI & Agents", "items": ["Agentic AI", "Claude Code", "OpenClaw", "Local LLMs", "MCP servers"] },
-    { "group": "Automation & Cloud", "items": ["n8n", "Google Cloud Platform", "Google Marketing Platform"] },
-    { "group": "Tools", "items": ["Google Chat API", "API integration"] }
-  ]
+    {
+      "group": "AI & LLM",
+      "items": [
+        "Generative AI",
+        "AI agents",
+        "Multi-agent orchestration (OpenClaw)",
+        "MCP servers",
+        "Prompt engineering",
+        "Anthropic API",
+        "Local LLMs",
+        "Claude Code"
+      ]
+    },
+    {
+      "group": "Software development",
+      "items": [
+        "Python",
+        "TypeScript",
+        "JavaScript",
+        "C",
+        "SQL",
+        "REST APIs",
+        "JSON",
+        "API integration"
+      ]
+    },
+    {
+      "group": "Frontend",
+      "items": [
+        "React",
+        "Next.js"
+      ]
+    },
+    {
+      "group": "Automation & cloud",
+      "items": [
+        "n8n",
+        "Google Cloud Platform",
+        "GA4",
+        "DV360",
+        "Google Chat API",
+        "Git"
+      ]
+    }
+  ],
+  "summary": "B.Tech Computer Engineering student at PDEU (2027) building Generative AI and AI-agent solutions for business workflows. Two internships at Tatvic Analytics (Google Premier Partner) delivering multi-agent orchestration, MCP integrations and n8n automation that cut handover time by up to 91%. Comfortable across Python, TypeScript, REST APIs, prompt engineering and cloud, and working in Agile teams."
 }

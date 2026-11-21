@@ -17,7 +17,7 @@ export function SystemsIndex() {
   return (
     <section id="work" className="mx-auto max-w-[1240px] px-6 pt-6">
       <div className="flex items-baseline justify-between">
-        <h2 className="font-mono-label text-[12px] text-ink-muted">Systems index</h2>
+        <h2 className="font-mono-label text-[12px] text-ink-muted">Projects</h2>
         <span className="font-mono text-[12px] text-ink-muted">
           <CountUp value={projects.length} /> shipped
         </span>

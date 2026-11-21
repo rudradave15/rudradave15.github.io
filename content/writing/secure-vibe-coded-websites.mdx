@@ -1,0 +1,132 @@
+---
+slug: "secure-vibe-coded-websites"
+title: "Vibe coding a website without leaking everything"
+date: "2026-11-21"
+summary: "A plain checklist for keeping your keys, data and users safe when an AI writes most of your code."
+tags: ["security", "vibe-coding", "web", "github"]
+draft: false
+---
+
+Vibe coding is great. You describe what you want, the AI writes it, and you have a working site in an evening. I build this way a lot.
+
+The catch is that the AI is trying to make it *work*. It isn't always trying to make it *safe*. And when you didn't write the code yourself, you don't always know what's in it.
+
+Here's the checklist I go through now. No fancy words, just the stuff that actually matters.
+
+## A real example from this week
+
+Before I put my projects on GitHub, I asked for a full security check first. Good thing I did. One project had a spreadsheet of my real stock portfolio sitting in the folder, with my broker client code in it. It wasn't excluded. One `git push` and it would have been public.
+
+Nothing was hacked. But it shows how easy it is to leak something without noticing. So check before you push, not after.
+
+## 1. Keep your secrets out of the code
+
+API keys, database passwords and tokens should never be written directly in your code.
+
+- Put them in a `.env` file.
+- Add `.env` to your `.gitignore` file so Git never uploads it.
+- Read them in your code as environment variables.
+- When you deploy, set them in your hosting dashboard (Vercel, Netlify and so on), not in the repo.
+
+Ask the AI to "use environment variables for all keys." It will, but only if you ask.
+
+## 2. Never put secret keys in frontend code
+
+This one catches a lot of people. Anything in your frontend code (React, plain JavaScript, HTML) is downloaded to the visitor's browser. Anyone can open the browser tools and read it.
+
+So if your website calls OpenAI or Stripe straight from the browser with your secret key, that key is public. Someone will find it and run up your bill.
+
+The fix is to make the call from your server, or from a serverless function. The browser talks to your server, and your server talks to the paid API with the secret key.
+
+Watch out for environment variables starting with `NEXT_PUBLIC_` or `VITE_`. Those are sent to the browser on purpose. Never put a secret in one.
+
+## 3. Check what you're uploading before the first push
+
+Before your first `git push`, look at what's actually going up:
+
+- Run `git status` and read the list.
+- Look for `.env` files, databases (`.db`, `.sqlite`), spreadsheets, logs, backups and personal documents.
+- Search the code for things like `api_key`, `password`, `secret` and `token`.
+
+If something private is there, add it to `.gitignore` and remove it from Git before pushing.
+
+## 4. If a key leaks, change it right away
+
+Deleting the file or the commit is not enough. Bots scan GitHub for leaked keys within minutes, and old commits stay in the history.
+
+If a key ever goes public:
+
+1. Go to that service and revoke the key or generate a new one. Do this first.
+2. Update your `.env` with the new key.
+3. Then clean up the repo.
+
+## 5. Turn on GitHub's free safety features
+
+For public repos, these cost nothing. Turn them on in the repo's settings, under security:
+
+- **Secret scanning:** warns you if a key gets committed.
+- **Push protection:** blocks the push if it spots a key, before it ever goes public.
+- **Dependabot alerts:** tells you when a library you use has a known security hole.
+
+I turn all three on for every repo now. It takes about a minute.
+
+## 6. Check users on the server, every time
+
+Hiding a button in the UI is not security. If the "Delete" button only shows for admins but the server doesn't check, anyone can still call that delete URL directly.
+
+- Every request that reads or changes data should check on the server who the user is and whether they're allowed.
+- Use a proper login provider (Clerk, Auth0, Supabase Auth, Firebase Auth) instead of building your own password system.
+- Never store passwords in plain text. Real auth providers handle this for you.
+
+## 7. Lock down your database
+
+If you use Supabase or Firebase, the default or "test mode" rules can let anyone read or write your whole database.
+
+- **Supabase:** turn on Row Level Security for every table and write rules like "users can only see their own rows."
+- **Firebase:** replace the test-mode rules before going live.
+
+Then test it. Log in as user A and try to load user B's data. If it works, it's broken.
+
+## 8. Don't trust anything users type
+
+Every form, search box and URL parameter can be used to attack your site.
+
+- Check inputs on the server: right type, right length, allowed values.
+- Use your database library's normal query methods instead of building SQL by gluing strings together. That's how SQL injection happens.
+- Don't put user text straight into the page as raw HTML. In React, be very careful with `dangerouslySetInnerHTML`.
+- Limit file uploads by type and size.
+
+## 9. Add limits so nobody can spam you
+
+If your site has a login, a contact form or an AI feature, someone will eventually hit it thousands of times.
+
+- Add rate limiting, like "max 10 requests a minute per user."
+- Set a spending limit on any paid API you use (OpenAI, Anthropic and others let you do this). It's your safety net if something goes wrong.
+
+## 10. Small things that still matter
+
+- **HTTPS everywhere.** Most hosts give it to you for free. Make sure it's on.
+- **Friendly error messages.** Show users "Something went wrong," not a full error with file paths and database details.
+- **Keep libraries updated.** Old packages are one of the most common ways in. Dependabot helps here.
+- **Collect less data.** If you don't need someone's phone number, don't ask for it. You can't leak what you don't have.
+- **Back up your database.** Mistakes and attacks both happen.
+
+## 11. Use the AI to review, but don't trust it blindly
+
+AI is actually pretty good at finding security problems if you ask it directly. Before launch I ask something like:
+
+> Do a security review of this project. Look for leaked keys, missing auth checks, unsafe database rules and anything users could abuse.
+
+It often catches real things. But it can also say "looks good" when it isn't. So use it as a second pair of eyes, and still go through this checklist yourself.
+
+## The short version
+
+If you only remember five things:
+
+1. Keys go in `.env`, and `.env` goes in `.gitignore`.
+2. No secret keys in frontend code.
+3. Look at what you're pushing before you push it.
+4. Check permissions on the server, and lock down your database rules.
+5. Turn on secret scanning and push protection.
+
+Vibe coding lets you build fast. These steps make sure you're not also leaking fast.

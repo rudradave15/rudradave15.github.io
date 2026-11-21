@@ -9,8 +9,7 @@ const CHAPTER_IDS = [
   "chapter-hero",
   "chapter-about",
   "chapter-systems",
-  "chapter-demo",
-  "chapter-writing",
+  "chapter-skills",
 ];
 
 /**

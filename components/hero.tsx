@@ -22,7 +22,7 @@ function MaskLine({ text }: { text: string }) {
   );
 }
 
-const SKILLS = cv.skills.flatMap((g) => g.items);
+const SKILLS = cv.skills.flatMap((g) => g.items.slice(0, 3));
 
 const QUOTES = [
   "With great power comes great responsibility.",
@@ -67,9 +67,9 @@ export function Hero() {
           </div>
           <p className="measure mt-6 text-[16px] leading-relaxed text-ink-muted">
             I&apos;m a B.Tech Computer Engineering student at {edu.school},
-            class of {edu.period}, based in {cv.location}. I like building
-            things that have to actually work. Nothing here is a tutorial
-            clone. Scroll down and try one yourself.
+            class of {edu.period}, based in {cv.location}. I build AI agents,
+            automation and data tools that run on real data. Scroll down
+            for my experience and projects.
           </p>
 
           <div className="mt-5 flex flex-wrap gap-2">

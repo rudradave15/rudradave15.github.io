@@ -66,13 +66,6 @@ export function getPost(slug: string): Post | undefined {
   return getAllPosts().find((p) => p.frontmatter.slug === slug);
 }
 
-export function getNow(): { content: string; updated: string } {
-  const full = path.join(CONTENT_DIR, "now.mdx");
-  const raw = fs.readFileSync(full, "utf8");
-  const { data, content } = matter(raw);
-  return { content, updated: String(data.updated ?? "") };
-}
-
 export function getCV() {
   const full = path.join(CONTENT_DIR, "cv.json");
   return JSON.parse(fs.readFileSync(full, "utf8"));

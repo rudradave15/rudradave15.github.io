@@ -11,7 +11,7 @@ export const receiptSchema = z.object({
 export type Receipt = z.infer<typeof receiptSchema>;
 
 export const artifactSchema = z.object({
-  kind: z.enum(["repo", "screenshot", "recording", "live-demo", "doc"]),
+  kind: z.enum(["repo", "screenshot", "recording", "doc"]),
   label: z.string(),
   href: z.string().optional(),
   note: z.string().optional(),

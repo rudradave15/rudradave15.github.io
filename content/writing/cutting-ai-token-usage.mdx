@@ -1,0 +1,78 @@
+---
+slug: "cutting-ai-token-usage"
+title: "How I cut my AI token usage by about 70%"
+date: "2026-11-21"
+summary: "Skills, MCP servers and a few boring habits that made my AI coding tools cheaper without making them worse."
+tags: ["claude-code", "skills", "mcp", "tokens"]
+draft: false
+---
+
+During my internship I built custom skills and workflows for Claude Code and a few other AI coding tools. The result was roughly 70% fewer tokens for the same quality of work. Some of that work is under NDA, so I won't go into the internal details. But the ideas behind it aren't secret, and I use the same ones on my own projects every day.
+
+## First, why should you care about tokens?
+
+Every message you send to an AI model costs tokens. That includes your question, but also every file it reads, every tool result it gets back, and the whole chat history it carries along.
+
+So tokens are money. They're also speed and quality. A model with a huge, messy context is slower, and it starts forgetting the important stuff that's buried in the middle.
+
+Most of the waste I saw came from three things:
+
+- The AI re-reading the same files again and again.
+- Me explaining the same rules and context in every new chat.
+- Using the biggest, most expensive model for tiny jobs like renaming a variable.
+
+## Skills: stop explaining the same thing twice
+
+A skill is basically a saved set of instructions for one kind of task. "How we write tests here." "How to deploy." "How to review a pull request." You write it once, and the AI loads it only when that task comes up.
+
+That last part is the big win. Before skills, I used to paste long instructions into every chat, or stuff everything into one giant instructions file. The AI read all of it every single time, even when 90% of it had nothing to do with the task.
+
+With skills, the AI only sees a short one-line description of each skill. It pulls in the full instructions only when it actually needs them.
+
+What I liked about this:
+
+- **Fewer tokens.** Instructions load on demand, not on every message.
+- **Same result every time.** The steps are written down, so the AI doesn't improvise a new process each time.
+- **Easy to improve.** If the AI keeps making the same mistake, I fix the skill once and it's fixed everywhere.
+- **Shareable.** The whole team gets the same skill, so everyone gets the same quality.
+
+My rule now is simple: if I explain something to the AI a third time, it becomes a skill.
+
+## MCP servers: give the AI the right door, not the whole house
+
+MCP (Model Context Protocol) is a standard way to plug tools and data into an AI. An MCP server might give it access to a database, a ticket system, Google Drive, or your own internal API.
+
+Without MCP, people do a lot of copy-pasting. They export a big table, paste it into the chat, and let the AI dig through it. That's thousands of tokens of data the model mostly doesn't need.
+
+With an MCP server, the AI asks for exactly what it needs. "Give me the 5 open tickets for this client." It gets back a small, clean answer.
+
+Why I like them:
+
+- **Smaller context.** The AI fetches the one thing it needs instead of everything.
+- **Fresh data.** It reads live data instead of an old copy someone pasted last week.
+- **Safer.** You decide which actions a server allows. Read-only is a great default.
+- **Build once, use everywhere.** The same server works across different AI tools.
+
+One warning: every connected MCP server adds its tool descriptions to the context. If you connect 15 servers "just in case," you're paying for them on every message. Connect what you use, and remove the rest.
+
+## The boring habits that saved the most
+
+Honestly, a lot of the savings came from habits, not clever tech.
+
+- **Pick the right model for the job.** I use the mid-size model for normal coding, the biggest model only for hard decisions like architecture, and the small, fast model for searching and simple edits. Think hard with the expensive one, do the work with the cheaper one.
+- **Start fresh between tasks.** When I finish one task, I clear the chat before starting an unrelated one. Old debugging history from task A is just dead weight for task B.
+- **Point to files, don't paste them.** "Look at `core/rules.py`" is way cheaper than pasting 600 lines into the chat.
+- **Keep a short project notes file.** The AI reads a short file with project status at the start, instead of me re-explaining where we left off.
+- **Send searches to a helper.** Searching through a big codebase eats tokens. A small helper agent can do the search and report back just the answer.
+- **Ask for short answers.** You don't need a 40-line summary of a 2-line change.
+
+## What I'd tell someone starting out
+
+You don't need all of this on day one. Start with two things:
+
+1. Turn your most repeated instruction into a skill.
+2. Clear the chat between unrelated tasks.
+
+Those two alone will save you a surprising amount. Then add MCP servers when you notice yourself copy-pasting data into the chat over and over.
+
+Cheaper and better usually go together here. A model with a small, focused context is just a better model.

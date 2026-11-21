@@ -1,112 +1,32 @@
 ---
 slug: "investment-os"
 title: "Investment OS"
-oneLiner: "A local, open-source stock research and portfolio tool built on one rule: never invent a number, and every output carries its own provenance."
+oneLiner: "Local stock research and portfolio tool that scores companies from real data and never invents a number."
 domain: "Fintech / decision support"
-stack: ["Python", "FastAPI", "SQLite", "yfinance", "SEC EDGAR", "Ollama (qwen3:8b)", "pytest"]
+stack: ["Python", "FastAPI", "SQLite", "yfinance", "SEC EDGAR", "Ollama", "pytest"]
 status: "active"
 year: "2026"
 featured: true
-contentComplete: false
+contentComplete: true
 artifacts:
-  - kind: "live-demo"
-    label: "Try the single-stock readout on this page"
-    href: "/#work"
-gaps:
-  - "No confirmed public repo URL yet. Is the GitHub repo actually public, and what's the link? (Marked 'open-source' in the one-liner on your instruction, but I can't publish a repo link I don't have.)"
-  - "The 'my specific contribution' section below is my draft, built from your project's own CLAUDE.md and DECISIONS.md files. Please correct the framing and tone before this is public."
-  - "No screenshot or screen recording yet. Need at least one of the terminal page and the portfolio Action/Conviction view."
-  - "Test count and status below reflect what I know from working sessions as of 2026-08-15. Confirm it's still current before publishing."
+  - kind: "repo"
+    label: "rudradave15/investment-os"
+    href: "https://github.com/rudradave15/investment-os"
+gaps: []
 ---
 
-## The problem
+## What it does
 
-Most free retail research tools are either a black-box AI chat wrapper
-("ask the bot if this stock is good") or a paid terminal you can't audit.
-Neither shows you *why* a stock passed or failed, or where each number
-actually came from. Investment OS starts from the opposite end: a
-deterministic scoring engine that never fabricates a metric, and a UI
-where every factual claim in the readout can be traced back to a real
-source <Receipt claim="No invented numbers, full provenance" source="investment-os-spec.md, section 0" detail="Section 0 of the project spec is the non-negotiable principles list: never invent a number, every output carries provenance, decision-support only, deterministic core separate from the LLM layer." />.
+Scores stocks and a portfolio against rules from real market and SEC data, and shows where every number came from.
 
-## Architecture
+## Built with
 
-The system is split into two physically separate layers, on purpose.
+Python, FastAPI, SQLite, yfinance, SEC EDGAR, Ollama (local LLM), pytest.
 
-- **`core/`**: the deterministic engine. No LLM calls anywhere in this
-  package <Receipt claim="core/ has zero LLM calls" source="CLAUDE.md, 'Where things are'" detail="Spec section 0.5 requires the deterministic core to be physically separate from the LLM layer. core/ imports no LLM client." />.
-  `core/models.py` defines the `Metric` / `Check` / `Gap` / `Assessment`
-  types every other module produces. `core/data.py` pulls yfinance
-  snapshots and price history, and computes derived ratios itself (like
-  PEG) rather than trusting a provider's pre-computed field, after finding
-  yfinance's own computed fields unreliable in practice. `core/filings.py`
-  wraps SEC EDGAR (via `edgartools`) for recent filings, filing text,
-  business-section extraction, and Form 4 insider transactions.
-  `core/holdings.py` adds 13F institutional holdings. `core/rules.py`
-  loads YAML rule files and applies importance-tier weighting
-  (critical/high/medium/supporting/informational), scoped by sector and
-  industry. A rule is never gated on a single ticker, so a fix
-  generalizes to every company in that sector.
-- **`reasoning/`**: the LLM layer, kept out of `core/` entirely. Runs
-  against a local model (Ollama, `qwen3:8b`) so there's no API cost and no
-  vendor dependency, and every call is logged append-only to a JSONL trace
-  file for provenance <Receipt claim="Every LLM call is logged, append-only" source="reasoning/trace.py" detail="reasoning/trace.py writes an append-only JSONL provenance log (reasoning/logs/trace.jsonl) of every call the LLM layer makes: plain-language score explanations, filing summaries, and connected-company extraction." />.
-  It's called on-demand only, hovering a glossary term or clicking
-  "explain this score," never automatically, and it narrates a score. It
-  never decides one.
-- **`webapp/`**: a FastAPI backend and a small vanilla JS/CSS frontend. A
-  single-stock terminal page (price chart, scored fundamentals with
-  per-criterion reasoning, SEC filings, a connected-companies graph) and a
-  portfolio page (snapshot import, diff against current holdings, and a
-  per-holding Action/Conviction readout).
+## How I built it
 
-Rules live in YAML, not code. Changing what the engine checks for means
-editing `rules/*.yaml`, not touching Python.
-
-## A hard decision, and the tradeoff
-
-The portfolio engine's Conviction score has three stages, and Stage C
-("Insufficient Confidence") is a true terminal floor. Once a holding
-lands there, no later stage can move it back out
-<Receipt claim="Insufficient Confidence is a terminal floor Stage C can't exit" source="core/portfolio_scoring.py, module docstring + DECISIONS.md" detail="Design was reviewed across 11 rounds with the user in plan mode before any code was written. The terminal-floor rule exists so a holding with genuinely insufficient evidence can never be laundered back into a confident-looking score by a later stage." />.
-That required treating three states, *structurally excluded*, *gap*, and
-*failed*, as genuinely different things everywhere in the pipeline,
-instead of collapsing "excluded" into "gap" for convenience.
-
-The tradeoff showed up as a real bug. Financial Services' `debt_to_equity`
-check is structurally excluded (leverage reads differently for banks), and
-excluded rules never produce a `Gap` object. So a Gap-only cap check
-silently missed it, and Conviction wasn't being capped the way the
-project's own Phase 1 findings said it should be. It was found and fixed
-during live verification against a real ticker (`HDFCBANK.NS`), not caught
-by the unit tests <Receipt claim="Bug found via live verification, not unit tests" source="DECISIONS.md, Phase 3 entry (_stage_b_cap)" detail="The automated suite runs against mocked data. Every new data source is additionally hand-verified live before being called done. This bug only surfaced during that live pass, which is the reason the live-verification step exists as a standing rule for the project, not just a one-off check." />.
-The more complex three-state model is more code to maintain, but
-collapsing it back to two states would let a sector-inappropriate metric
-quietly leak into a confidence score for financials, utilities, or real
-estate.
-
-## My specific contribution
-
-I wrote the spec and its non-negotiable principles, designed the
-rule/evidence/scoring architecture across three build phases, and drove
-implementation using Claude Code as a pair-programmer. I ran every
-live-verification pass by hand against real tickers before calling a
-phase done, including the one above, and made the calibration and
-architecture calls: what gets a hard-coded rule tier vs. an
-evidence-weighted one, what becomes an honest `Gap` instead of a fragile
-scraper, when a new rule needs a backtest and my own sign-off before it's
-wired into live scoring.
-
-## Status
-
-Active. The deterministic core (Phase 1) is frozen after a full
-calibration survey. Phase 2 (single-stock terminal) and Phase 3 (portfolio
-snapshot import plus Action/Conviction engine) are both shipped and
-live-verified <Receipt claim="548 tests passing" source="project working notes, 2026-08-15" detail="All tests run against mocked data/HTTP/LLM clients (or a real sqlite tmp file for the store layers). No live network calls in the automated suite. Every new live data source (SEC, 13F, yfinance corporate actions, each LLM-touching endpoint) is additionally hand-verified against real data before being called done." />.
-Most recently, a multi-agent research pass across the existing signal set
-found that one of the two live signals (PEAD) is a measurable drag rather
-than just weak, and that conviction-scaled and low-volatility position
-sizing were both quietly backwards. Those findings are currently under
-review before anything changes in live scoring, per the project's own
-rule that a new or revised signal needs a backtest, a robustness recheck,
-and explicit sign-off before it's ever auto-added.
+- **Scoring core:** a deterministic engine with no AI in it; rules live in YAML, weighted by importance and scoped by sector.
+- **Data:** yfinance prices and fundamentals, plus SEC filings, insider trades (Form 4) and institutional holdings (13F).
+- **AI layer:** a local LLM only explains a score on request, and every call is logged.
+- **App:** a FastAPI backend with a stock terminal page and a portfolio page that gives each holding an Action and Conviction.
+- **Testing:** 548 automated tests, plus backtests before any new signal goes live.

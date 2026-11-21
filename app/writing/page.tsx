@@ -24,14 +24,9 @@ export default function WritingIndex() {
       <div className="mt-14 hairline">
         {posts.length === 0 && (
           <div className="border-b border-line py-10">
-            <p className="font-mono-label text-[11px] text-flag">Nothing published yet</p>
+            <p className="font-mono-label text-[11px] text-flag">Nothing here yet</p>
             <p className="measure mt-2 text-[15px] text-ink-muted">
-              This index is wired up and ready. First posts are queued, not
-              backfilled with filler. Check{" "}
-              <Link href="/now" className="link-draw text-signal">
-                /now
-              </Link>{" "}
-              for what&apos;s currently in progress.
+              Coming soon.
             </p>
           </div>
         )}

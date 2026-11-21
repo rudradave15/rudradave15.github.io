@@ -1,20 +1,22 @@
 ---
 slug: "client-pulse-report"
-title: "client-pulse-report"
-oneLiner: "Client-health monitoring script with a 3-dimension scoring framework (usage / relationship / financial)."
+title: "Client Pulse Report"
+oneLiner: "Script that monitors client health with a three-part score."
 domain: "Client analytics / ops tooling"
 stack: []
 status: "shipped"
 year: "2025"
 featured: true
-contentComplete: false
+contentComplete: true
 artifacts: []
-gaps:
-  - "Everything below the one-liner is missing. Need: the problem it solved, architecture (what feeds each of the three dimensions, usage, relationship, financial, and how they combine into one score), one hard decision plus tradeoff, your specific contribution, and the actual stack (language, data sources)."
-  - "Status and year are guesses. Confirm."
-  - "No artifacts (repo, screenshot, recording) yet, and confirm whether this is publishable (sounds like it may be client or employer work)."
+gaps: []
 ---
 
-**Content gap: this case study is not written yet.** Per your instruction,
-I'm not filling this in with invented architecture or metrics. Send me the
-real details (see the gap list above) and I'll write it.
+## What it does
+
+Flags client accounts that need attention by scoring their health.
+
+## How I built it
+
+- Scores each client on three dimensions: usage, relationship and financial.
+- Combines them into one health score per client.
