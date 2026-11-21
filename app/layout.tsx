@@ -31,6 +31,24 @@ const jetbrainsMono = JetBrains_Mono({
 
 const SITE_URL = "https://rudradave15.github.io";
 
+// GitHub Pages cannot send custom HTTP headers, so the CSP ships as a <meta>
+// tag. Static export means no nonces (see Next's CSP guide, "Without Nonces"),
+// so inline scripts/styles are allowed but every external origin is blocked.
+// Dev needs 'unsafe-eval' for React's debug tooling; production does not.
+const isDev = process.env.NODE_ENV === "development";
+const CSP = [
+  "default-src 'self'",
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob:",
+  "font-src 'self' data:",
+  `connect-src 'self'${isDev ? " ws: wss:" : ""}`,
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  ...(isDev ? [] : ["upgrade-insecure-requests"]),
+].join("; ");
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
@@ -59,6 +77,7 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
   },
+  referrer: "strict-origin-when-cross-origin",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -67,6 +86,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${bricolage.variable} ${inter.variable} ${jetbrainsMono.variable} h-full`}
     >
+      <head>
+        <meta httpEquiv="Content-Security-Policy" content={CSP} />
+      </head>
       <body className="min-h-full flex flex-col bg-paper text-ink">
         <div className="aurora" aria-hidden />
         <SignalTrace />
