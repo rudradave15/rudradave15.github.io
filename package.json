@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -H 127.0.0.1",
     "cv": "node scripts/generate-cv.mjs",
     "build": "node scripts/generate-cv.mjs && next build",
     "start": "next start",
