@@ -1,0 +1,379 @@
+@import "tailwindcss";
+
+:root {
+  --paper: #06050a;
+  --paper-2: #0d0b14;
+  --ink: #f6f4fb;
+  --ink-muted: #a79fc2;
+  --signal: #8b6bff;
+  --signal-2: #ff6b81;
+  --flag: #ffb648;
+  --pulse: #ffb648;
+  --terminal: #020103;
+  --terminal-2: #08060c;
+  --terminal-ink: #f6f4fb;
+  --line: rgba(246, 244, 251, 0.1);
+  --line-terminal: rgba(246, 244, 251, 0.12);
+
+  --section-gap: 128px;
+  --section-gap-sm: 72px;
+
+  --grid-dot: rgba(246, 244, 251, 0.05);
+}
+
+@media (max-width: 768px) {
+  :root {
+    --section-gap: 72px;
+    --section-gap-sm: 48px;
+  }
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-signal: var(--signal);
+  --color-signal-2: var(--signal-2);
+  --color-pulse: var(--pulse);
+  --color-flag: var(--flag);
+  --color-terminal: var(--terminal);
+  --color-terminal-2: var(--terminal-2);
+  --color-terminal-ink: var(--terminal-ink);
+  --color-line: var(--line);
+  --color-line-terminal: var(--line-terminal);
+
+  --font-display: var(--font-bricolage), "Instrument Serif", ui-serif, Georgia, serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+  --spacing-section: var(--section-gap);
+  --spacing-section-sm: var(--section-gap-sm);
+
+  --breakpoint-xs: 390px;
+}
+
+/* Everything below is wrapped in @layer components so Tailwind's own
+   utility classes (absolute, rounded-t-[20px], h-full, etc.) always win
+   when combined with these custom classes on the same element. Plain
+   unlayered CSS beats ANY layered Tailwind utility regardless of source
+   order or specificity, which silently broke the receipt panel's
+   `absolute` positioning earlier (`.glass-card`'s `position: relative`
+   was winning over the `absolute` utility). Keep every custom class in
+   this layer, no exceptions. */
+@layer components {
+  html {
+    scroll-behavior: auto;
+    overflow-x: hidden;
+  }
+
+  body {
+    overflow-x: hidden;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.6;
+    position: relative;
+  }
+
+  /* Film-grain texture: a tiled feTurbulence noise tile, fixed over
+     everything at very low opacity. Pure tactility, no motion, cheap
+     (~1.5kb inline SVG, no network request). */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.035;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-size: 180px 180px;
+  }
+
+  * {
+    border-color: var(--line);
+  }
+
+  ::selection {
+    background: var(--signal);
+    color: var(--paper);
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
+    line-height: 1.05;
+  }
+
+  .font-mono-label {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .measure {
+    max-width: 68ch;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--signal);
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  .link-draw {
+    position: relative;
+    text-decoration: none;
+    background-image: linear-gradient(90deg, var(--signal), var(--signal-2));
+    background-size: 0% 2px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .link-draw:hover,
+  .link-draw:focus-visible {
+    background-size: 100% 2px;
+  }
+
+  .hairline {
+    border-top: 1px solid var(--line);
+  }
+
+  .hairline-terminal {
+    border-top: 1px solid var(--line-terminal);
+  }
+
+  .text-gradient,
+  .text-gradient-terminal {
+    background: linear-gradient(100deg, var(--signal) 10%, var(--signal-2) 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+
+  /* Chromatic-glitch: two mistimed duplicate layers in the site's own two
+     accents. Fires once via .glitch-run (added by JS on load/hover), then
+     settles. Fully inert under reduced motion. */
+  .glitch {
+    position: relative;
+    display: inline-block;
+  }
+
+  .glitch::before,
+  .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+  }
+
+  .glitch.glitch-run::before {
+    color: var(--signal);
+    animation: glitch-shift-a 420ms steps(2, end) 1;
+    mix-blend-mode: screen;
+  }
+
+  .glitch.glitch-run::after {
+    color: var(--signal-2);
+    animation: glitch-shift-b 420ms steps(2, end) 1;
+    mix-blend-mode: screen;
+  }
+
+  /* Glassmorphic surface: the base material for every card/panel in this
+     version. Soft, translucent, blurred backdrop, glowing on hover. */
+  .glass-card {
+    position: relative;
+    border-radius: 20px;
+    border: 1px solid rgba(246, 244, 251, 0.1);
+    background: linear-gradient(160deg, rgba(246, 244, 251, 0.06), rgba(246, 244, 251, 0.02));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    transition: box-shadow 250ms ease-out, border-color 250ms ease-out, transform 250ms ease-out;
+  }
+
+  .glass-card:hover,
+  .glass-card:focus-within {
+    border-color: rgba(139, 107, 255, 0.4);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.35),
+      0 0 40px -8px color-mix(in srgb, var(--signal) 45%, transparent);
+  }
+
+  .glow-ring {
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--signal) 35%, transparent),
+      0 0 48px -10px color-mix(in srgb, var(--signal) 55%, transparent);
+  }
+
+  .spotlight {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .spotlight::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      280px circle at var(--mx, 50%) var(--my, 50%),
+      color-mix(in srgb, var(--signal) 20%, transparent),
+      transparent 70%
+    );
+    transition: opacity 200ms ease-out;
+    pointer-events: none;
+  }
+
+  .spotlight:hover::before,
+  .spotlight:focus-within::before {
+    opacity: 1;
+  }
+
+  .live-dot {
+    animation: blink-dot 1.6s ease-in-out infinite;
+  }
+
+  /* The dark "terminal" surfaces (live demo) keep a glass treatment too,
+     just darker and with a gradient glow border instead of a flat line. */
+  .holo-panel {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    border: 1px solid rgba(246, 244, 251, 0.12);
+    background: linear-gradient(165deg, rgba(139, 107, 255, 0.08), transparent 45%), var(--terminal);
+    box-shadow:
+      0 20px 60px -20px rgba(0, 0, 0, 0.6),
+      0 0 60px -20px color-mix(in srgb, var(--signal) 40%, transparent);
+  }
+
+  .holo-panel > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Aurora mesh background: a handful of large, blurred, drifting gradient
+     blobs behind everything. Fixed so it reads as one continuous atmosphere
+     across every chapter rather than repeating per-section. */
+  .aurora {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .aurora::before,
+  .aurora::after {
+    content: "";
+    position: absolute;
+    width: 50vw;
+    height: 50vw;
+    border-radius: 50%;
+    filter: blur(140px);
+    opacity: 0.12;
+  }
+
+  .aurora::before {
+    top: -10%;
+    left: -10%;
+    background: var(--signal);
+    animation: aurora-drift-a 26s ease-in-out infinite alternate;
+  }
+
+  .aurora::after {
+    bottom: -15%;
+    right: -10%;
+    background: var(--signal-2);
+    animation: aurora-drift-b 30s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes glitch-shift-a {
+  0% {
+    opacity: 0.9;
+    transform: translate(3px, 0);
+    clip-path: inset(0 0 60% 0);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translate(-2px, 1px);
+    clip-path: inset(40% 0 20% 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(0, 0);
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes glitch-shift-b {
+  0% {
+    opacity: 0.9;
+    transform: translate(-3px, 0);
+    clip-path: inset(50% 0 10% 0);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translate(2px, -1px);
+    clip-path: inset(10% 0 50% 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(0, 0);
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes blink-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+@keyframes aurora-drift-a {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(6vw, 8vh) scale(1.12);
+  }
+}
+
+@keyframes aurora-drift-b {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(-6vw, -6vh) scale(1.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .glitch::before,
+  .glitch::after {
+    display: none;
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "name": "Rudra Dave",
+  "headline": "TODO, needs your sign-off. Draft: \"Builder of agentic systems and deterministic tools. Production automation, not tutorials.\"",
+  "location": "Ahmedabad, India",
+  "email": "rudradave701@gmail.com",
+  "links": [
+    { "label": "LinkedIn", "href": "https://www.linkedin.com/in/rudra-dave-56158b317" },
+    { "label": "GitHub", "href": "TODO, need your GitHub username/URL" },
+    { "label": "Email", "href": "mailto:rudradave701@gmail.com" }
+  ],
+  "education": [
+    {
+      "school": "Pandit Deendayal Energy University (PDEU), Gandhinagar",
+      "program": "B.Tech, Computer Engineering",
+      "period": "2023 – 2027"
+    }
+  ],
+  "experience": [
+    {
+      "org": "Tatvic Analytics (Google Premier Partner)",
+      "role": "Agentic AI Automation Intern",
+      "period": "Jun 2026 – Jul 2026",
+      "bullets": [
+        "Worked on dashboard development, local LLM integration, OpenClaw-based multi-agent orchestration, and MCP server integration (includes NDA-protected initiatives).",
+        "Built custom skills and workflows to extend Claude Code and other AI coding tools, cutting AI token usage by roughly 70% without a drop in output quality."
+      ]
+    },
+    {
+      "org": "Tatvic Analytics (Google Premier Partner)",
+      "role": "Intern",
+      "period": "Jun 2025 – Jul 2025",
+      "bullets": [
+        "Built an end-to-end knowledge-transfer automation workflow in n8n, integrated with Google Chat Workspace. It auto-creates a transition group, assigns KT tasks, tracks completion, and sends reminders. Reduced personnel transition time 85 to 91% with zero data loss during handovers.",
+        "Used the Google ecosystem (GCP, GA4, DV360) to build data-driven tracking systems."
+      ]
+    }
+  ],
+  "leadership": [
+    {
+      "org": "Science and Technical Committee, PDEU",
+      "role": "Event Management Head",
+      "period": "",
+      "bullets": [
+        "Ran event management for the largest student committee at PDEU (22 clubs), leading a team of 150+ across flagship events including Gandhinagar's largest hackathon (36 hours, 200+ participants) and Tesseract, a flagship event with international participation.",
+        "Managed sponsorship and stakeholder tie-ups with government organizations; trained and mentored the student teams running execution."
+      ]
+    }
+  ],
+  "skills": [
+    { "group": "Languages", "items": ["Python", "C", "SQL"] },
+    { "group": "AI & Agents", "items": ["Agentic AI", "Claude Code", "OpenClaw", "Local LLMs", "MCP servers"] },
+    { "group": "Automation & Cloud", "items": ["n8n", "Google Cloud Platform", "Google Marketing Platform"] },
+    { "group": "Tools", "items": ["Google Chat API", "API integration"] }
+  ]
+}
